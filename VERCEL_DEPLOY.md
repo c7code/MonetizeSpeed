@@ -88,3 +88,39 @@ O frontend em desenvolvimento usará `http://localhost:3000/api` automaticamente
 
 5. **Variáveis de Ambiente**: Nunca commite arquivos `.env` no repositório. Use apenas as variáveis de ambiente do Vercel.
 
+## Debug e Troubleshooting
+
+### Erro 500 nas APIs
+
+Se você estiver recebendo erro 500 nas requisições:
+
+1. **Verifique as variáveis de ambiente**:
+   - Acesse o painel do Vercel → Settings → Environment Variables
+   - Certifique-se de que `DATABASE_URL` e `JWT_SECRET` estão configuradas
+   - Verifique se a `DATABASE_URL` está correta e acessível
+
+2. **Verifique os logs do Vercel**:
+   - No painel do Vercel, vá em Deployments → selecione o deployment → Functions
+   - Clique na função que está dando erro para ver os logs
+   - Procure por mensagens de erro específicas
+
+3. **Teste o endpoint de debug**:
+   - Acesse `https://seu-dominio.vercel.app/api/debug`
+   - Isso mostrará se as variáveis de ambiente estão configuradas corretamente
+
+4. **Inicialize o banco de dados**:
+   - Acesse `https://seu-dominio.vercel.app/api/_init-db` uma vez
+   - Isso criará as tabelas necessárias no banco de dados
+
+5. **Verifique a conexão com o banco**:
+   - Certifique-se de que o banco PostgreSQL está acessível publicamente
+   - Verifique se o firewall permite conexões do Vercel
+   - Para Supabase, verifique se o banco está configurado para aceitar conexões externas
+
+### Erros Comuns
+
+- **"DATABASE_URL não configurada"**: Configure a variável de ambiente no Vercel
+- **"Connection timeout"**: Verifique se o banco está acessível e se o firewall está configurado
+- **"Token inválido"**: Verifique se `JWT_SECRET` está configurada
+- **"Tabela não existe"**: Execute o endpoint `/api/_init-db` para criar as tabelas
+

@@ -5,15 +5,44 @@ import { getPool } from '../db.js';
 export default async function handler(req, res) {
   // Suportar CORS preflight
   if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     return res.status(200).end();
   }
+
+  // Configurar headers CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido' });
   }
 
   try {
-    const { email, password } = req.body;
+    // Verificar variáveis de ambiente
+    if (!process.env.DATABASE_URL) {
+      console.error('❌ DATABASE_URL não configurada');
+      return res.status(500).json({ error: 'Configuração do servidor inválida' });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error('❌ JWT_SECRET não configurada');
+      return res.status(500).json({ error: 'Configuração do servidor inválida' });
+    }
+
+    // Fazer parse do body se necessário
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        return res.status(400).json({ error: 'Body inválido' });
+      }
+    }
+
+    const { email, password } = body || {};
 
     // Validações
     if (!email || !password) {
@@ -59,7 +88,12 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Erro no login:', error);
-    return res.status(500).json({ error: 'Erro ao fazer login' });
+    console.error('Stack:', error.stack);
+    return res.status(500).json({ 
+      error: 'Erro ao fazer login',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 }
 

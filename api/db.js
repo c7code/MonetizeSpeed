@@ -9,24 +9,34 @@ export function getPool() {
   if (!pool) {
     // No Vercel, as variáveis de ambiente já estão disponíveis
     if (!process.env.DATABASE_URL) {
-      throw new Error('DATABASE_URL não configurada');
+      const error = new Error('DATABASE_URL não configurada');
+      console.error('❌ Erro:', error.message);
+      console.error('📋 Variáveis de ambiente disponíveis:', Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('JWT')));
+      throw error;
     }
 
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: {
-        rejectUnauthorized: false
-      },
-      // Configurações otimizadas para serverless
-      max: 1, // Apenas 1 conexão por função (serverless)
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 20000,
-    });
+    try {
+      pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false
+        },
+        // Configurações otimizadas para serverless
+        max: 1, // Apenas 1 conexão por função (serverless)
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 20000,
+      });
 
-    pool.on('error', (err) => {
-      console.error('Erro na conexão com o banco:', err);
-      pool = null; // Resetar pool em caso de erro
-    });
+      pool.on('error', (err) => {
+        console.error('❌ Erro na conexão com o banco:', err);
+        pool = null; // Resetar pool em caso de erro
+      });
+
+      console.log('✅ Pool de conexão criado');
+    } catch (error) {
+      console.error('❌ Erro ao criar pool:', error);
+      throw error;
+    }
   }
 
   return pool;
