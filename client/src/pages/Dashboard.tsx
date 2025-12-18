@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useData } from '../store/data'
-import Chart from '../components/Chart'
+import ComparisonChart from '../components/ComparisonChart'
 
 export default function Dashboard() {
   const { transactions, budgets } = useData()
@@ -16,7 +16,7 @@ export default function Dashboard() {
 
   const totalSpent = useMemo(() => budgetData.reduce((sum, b) => sum + b.spent, 0), [budgetData])
 
-  const balanceEvolution = useMemo(() => {
+  const incomeVsExpenses = useMemo(() => {
     const months = Array.from({ length: 12 }, (_, i) => {
       const date = new Date()
       date.setMonth(date.getMonth() - (11 - i))
@@ -32,9 +32,15 @@ export default function Dashboard() {
         return tDate >= monthStart && tDate <= monthEnd
       })
       
-      return monthTransactions.reduce((acc, t) => {
-        return acc + (t.type === 'income' ? t.amount : -t.amount)
-      }, 0)
+      const income = monthTransactions
+        .filter(t => t.type === 'income')
+        .reduce((acc, t) => acc + t.amount, 0)
+      
+      const expenses = monthTransactions
+        .filter(t => t.type === 'expense')
+        .reduce((acc, t) => acc + t.amount, 0)
+      
+      return { income, expenses }
     })
   }, [transactions])
 
@@ -126,6 +132,13 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
+            {totalSpent > 0 && (
+              <div className="mt-3 md:mt-4 flex justify-end">
+                <div className="text-sm sm:text-base font-semibold text-gray-800">
+                  Total: R$ {totalSpent.toFixed(2)}
+                </div>
+              </div>
+            )}
           </div>
           <div className="grid gap-3 md:gap-4">
             {budgets.map(b => {
@@ -146,9 +159,9 @@ export default function Dashboard() {
         </div>
       </div>
       <div>
-        <div className="mb-2 text-sm text-gray-700">Evolução Mensal do Saldo</div>
+        <div className="mb-2 text-sm text-gray-700">Comparação Receitas vs Despesas</div>
         <div className="bg-white rounded shadow p-3 md:p-4 border border-gray-200">
-          <Chart data={balanceEvolution} />
+          <ComparisonChart data={incomeVsExpenses} />
         </div>
       </div>
     </div>
