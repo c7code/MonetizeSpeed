@@ -1,0 +1,28 @@
+{
+  "name": "monetize-speed",
+  "version": "1.0.0",
+  "description": "Run client and server concurrently",
+  "scripts": {
+    "start": "concurrently \"npm:start --prefix server\" \"npm:dev --prefix client\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "ci:server": "npm install --prefix server",
+    "ci:client": "npm install --prefix client",
+    "install-all": "concurrently \"npm:ci:server\" \"npm:ci:client\""
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.50.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^16.5.0",
+    "prettier": "^3.7.4",
+    "typescript-eslint": "^8.50.0"
+  }
+}

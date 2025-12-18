@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useData, presetCategories } from '../store/data'
+import { useDataStore, presetCategories } from '../store/dataStore'
 import ProgressBar from '../components/ProgressBar'
 
 export default function Budgets() {
-  const { budgets, transactions, addBudget, updateBudget, deleteBudget } = useData()
+  const { budgets, transactions, addBudget, updateBudget, deleteBudget } = useDataStore()
   const [category, setCategory] = useState(presetCategories[0])
   const [limit, setLimit] = useState<number>(0)
   const [msg, setMsg] = useState('')

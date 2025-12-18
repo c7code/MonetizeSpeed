@@ -11,7 +11,6 @@ import Budgets from './pages/Budgets'
 import Reports from './pages/Reports'
 import Goals from './pages/Goals'
 import BankImport from './pages/BankImport'
-import { DataProvider } from './store/data'
 import { useAuth, AuthProvider } from './store/auth'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -24,8 +23,7 @@ const root = createRoot(document.getElementById('root')!)
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <DataProvider>
-        <BrowserRouter>
+        <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -39,7 +37,6 @@ root.render(
             </Route>
           </Routes>
         </BrowserRouter>
-      </DataProvider>
     </AuthProvider>
   </React.StrictMode>
 )

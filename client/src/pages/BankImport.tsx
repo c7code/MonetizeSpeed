@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useData } from '../store/data'
+import { useDataStore } from '../store/dataStore'
 
 function categorize(desc: string) {
   const d = desc.toLowerCase()
@@ -11,7 +11,7 @@ function categorize(desc: string) {
 }
 
 export default function BankImport() {
-  const { addTransaction } = useData()
+  const { addTransaction } = useDataStore()
   const [info, setInfo] = useState('')
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0]

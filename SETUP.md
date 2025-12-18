@@ -46,6 +46,15 @@ npm run dev
 
 O servidor estará rodando em `http://localhost:3000`
 
+### 4. Executar Migrações do Banco de Dados
+
+Para criar as tabelas no banco de dados ou aplicar novas alterações de esquema:
+
+```bash
+cd server
+npm run migrate up
+```
+
 ## Configuração do Cliente
 
 ### 1. Configurar URL da API
@@ -88,10 +97,32 @@ npm run dev
 
 ## Estrutura do Banco de Dados
 
-O sistema cria automaticamente as seguintes tabelas:
+As tabelas do banco de dados são gerenciadas através de migrações. Para criar ou atualizar o esquema do banco de dados, execute as migrações conforme instruído acima. As tabelas principais incluem:
 
 - `users` - Usuários do sistema
 - `transactions` - Transações financeiras
 - `budgets` - Orçamentos por categoria
 - `goals` - Metas financeiras
+
+---
+
+## Qualidade de Código e Formatação
+
+Para garantir a consistência do código e corrigir problemas de formatação, você pode usar os seguintes comandos no diretório raiz do projeto:
+
+### 1. Formatar o código
+
+```bash
+npm run format
+```
+
+Este comando usará o Prettier para formatar automaticamente todos os arquivos suportados no projeto.
+
+### 2. Verificar e Corrigir Erros de Lint
+
+```bash
+npm run lint:fix
+```
+
+Este comando usará o ESLint para verificar o código em busca de problemas e tentará corrigi-los automaticamente. Para apenas verificar os problemas sem corrigi-los, use `npm run lint`.
 

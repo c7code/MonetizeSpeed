@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useData } from '../store/data'
+import { useDataStore } from '../store/dataStore'
 import ProgressBar from '../components/ProgressBar'
 
 export default function Goals() {
-  const { goals, addGoal, updateGoal, deleteGoal } = useData()
+  const { goals, addGoal, updateGoal, deleteGoal } = useDataStore()
   const [name, setName] = useState('')
   const [target, setTarget] = useState<number>(0)
   const [saved, setSaved] = useState<number>(0)

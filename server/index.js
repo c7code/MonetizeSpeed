@@ -1,7 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-// Carregar db.js primeiro para garantir que as variáveis de ambiente sejam carregadas
-import { initDatabase } from './db.js';
 import authRoutes from './routes/auth.js';
 import transactionsRoutes from './routes/transactions.js';
 import budgetsRoutes from './routes/budgets.js';
@@ -32,7 +30,6 @@ app.get('/api/health', (req, res) => {
 // Inicializar banco de dados e servidor
 async function startServer() {
   try {
-    await initDatabase();
     app.listen(PORT, () => {
       console.log(`🚀 Servidor rodando na porta ${PORT}`);
       console.log(`📡 API disponível em http://localhost:${PORT}/api`);

@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
-import { useData } from '../store/data'
+import { useDataStore } from '../store/dataStore'
 import Chart from '../components/Chart'
 
 export default function Dashboard() {
-  const { transactions, budgets } = useData()
+  const { transactions, budgets } = useDataStore()
   const [period, setPeriod] = useState<'dia' | 'semana' | 'mês' | 'ano'>('mês')
   const balance = useMemo(() => transactions.reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0), [transactions])
   
@@ -108,7 +108,7 @@ export default function Dashboard() {
             <div className="text-sm font-medium mb-3 text-gray-700">Distribuição de Gastos</div>
             {totalSpent > 0 ? (
               <div className="flex items-center justify-center overflow-hidden">
-                <svg width="100%" height="auto" viewBox="0 0 300 300" className="max-w-[250px] sm:max-w-[300px]" preserveAspectRatio="xMidYMid meet">
+                <svg width="100%" viewBox="0 0 300 300" className="max-w-[250px] sm:max-w-[300px]" preserveAspectRatio="xMidYMid meet">
                   {pieSlices}
                 </svg>
               </div>

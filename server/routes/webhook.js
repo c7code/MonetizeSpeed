@@ -1,6 +1,5 @@
 import express from 'express';
 import pool from '../db.js';
-import { authenticateToken } from './auth.js';
 
 const router = express.Router();
 
@@ -19,9 +18,9 @@ function parseTransactionMessage(message) {
   
   // Extrair valor (procura por números com "reais", "r$", ou apenas números)
   const valuePatterns = [
-    /(\d+[\.,]?\d*)\s*(?:reais?|r\$|rs)/gi,
-    /r\$\s*(\d+[\.,]?\d*)/gi,
-    /(\d+[\.,]?\d*)/g
+    /(\d+[.,]?\d*)\s*(?:reais?|r\$|rs)/gi,
+    /r\$\s*(\d+[.,]?\d*)/gi,
+    /(\d+[.,]?\d*)/g
   ];
   
   let amount = null;

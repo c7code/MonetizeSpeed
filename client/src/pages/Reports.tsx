@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-import { useData } from '../store/data'
+import { useDataStore } from '../store/dataStore'
 
 export default function Reports() {
-  const { transactions } = useData()
+  const { transactions } = useDataStore()
   const byCategory = useMemo(() => {
     const map: Record<string, number> = {}
     transactions.filter(t=>t.type==='expense').forEach(t => { map[t.category] = (map[t.category]||0) + t.amount })

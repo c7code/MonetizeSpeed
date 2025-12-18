@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react'
-import { useData, presetCategories } from '../store/data'
+import { useDataStore, presetCategories } from '../store/dataStore'
 
 type FilterType = 'all' | 'paid' | 'received' | 'pending_payment' | 'pending_receipt'
 
 export default function Transactions() {
-  const { transactions, addTransaction, updateTransaction, deleteTransaction } = useData()
+  const { transactions, addTransaction, updateTransaction, deleteTransaction } = useDataStore()
   const [filter, setFilter] = useState<FilterType>('all')
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -26,11 +26,6 @@ export default function Transactions() {
   const [editDate, setEditDate] = useState('')
   const [editDescription, setEditDescription] = useState('')
   const [editStatus, setEditStatus] = useState<'paid' | 'received' | 'pending_payment' | 'pending_receipt'>('paid')
-
-  function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]
-    if (f) setReceiptUrl(URL.createObjectURL(f))
-  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()

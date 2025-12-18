@@ -2,22 +2,32 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../db.js';
+import { z } from 'zod';
+
+// Zod Schemas for validation
+const registerSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+  name: z.string().optional(),
+});
+
+const loginSchema = z.object({
+  email: z.string().email('Email inválido'),
+  password: z.string().min(1, 'Senha é obrigatória'), // Minimum length for login is just presence
+});
 
 const router = express.Router();
 
 // Cadastro de usuário
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const parsedBody = registerSchema.safeParse(req.body);
 
-    // Validações
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+    if (!parsedBody.success) {
+      return res.status(400).json({ errors: parsedBody.error.flatten().fieldErrors });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'A senha deve ter pelo menos 6 caracteres' });
-    }
+    const { email, password, name } = parsedBody.data;
 
     // Verificar se o usuário já existe
     const userExists = await pool.query(
@@ -66,12 +76,13 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const parsedBody = loginSchema.safeParse(req.body);
 
-    // Validações
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+    if (!parsedBody.success) {
+      return res.status(400).json({ errors: parsedBody.error.flatten().fieldErrors });
     }
+
+    const { email, password } = parsedBody.data;
 
     // Buscar usuário
     const result = await pool.query(
