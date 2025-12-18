@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo, useState } from 'react'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+// Usar URL relativa em produção, localhost em desenvolvimento
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api')
 
 type AuthContextType = { 
   token: string | null

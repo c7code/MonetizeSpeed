@@ -2,7 +2,8 @@ import React, { createContext, useContext, useMemo, useState, useEffect } from '
 import { useAuth } from './auth'
 import { categories } from '../mock/data'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+// Usar URL relativa em produção, localhost em desenvolvimento
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3000/api')
 
 export type Transaction = { id: string, type: 'income' | 'expense', category: string, amount: number, date: string, recurring?: boolean, receiptUrl?: string, description?: string, status?: 'paid' | 'received' | 'pending_payment' | 'pending_receipt' }
 export type Budget = { id: string, category: string, limit: number }
