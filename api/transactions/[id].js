@@ -13,7 +13,12 @@ export default async function handler(req, res) {
     return res.status(authResult.status).json({ error: authResult.error });
   }
 
-  const { id } = req.query;
+  // Extrair ID da query (no Vercel, rotas dinâmicas vêm em req.query)
+  const id = req.query?.id;
+  
+  if (!id) {
+    return res.status(400).json({ error: 'ID não fornecido' });
+  }
   const pool = getPool();
 
   // Atualizar transação

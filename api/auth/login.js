@@ -32,14 +32,27 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Configuração do servidor inválida' });
     }
 
-    // Fazer parse do body se necessário
-    let body = req.body;
-    if (typeof body === 'string') {
-      try {
-        body = JSON.parse(body);
-      } catch (e) {
-        return res.status(400).json({ error: 'Body inválido' });
+    // Fazer parse do body de forma mais robusta
+    let body;
+    try {
+      // Se req.body já é um objeto, usar diretamente
+      if (typeof req.body === 'object' && req.body !== null) {
+        body = req.body;
+      } 
+      // Se for string, fazer parse
+      else if (typeof req.body === 'string') {
+        body = JSON.parse(req.body);
       }
+      // Se for undefined ou null, tentar ler do stream (não comum no Vercel)
+      else {
+        body = {};
+      }
+    } catch (parseError) {
+      console.error('Erro ao fazer parse do body:', parseError);
+      return res.status(400).json({ 
+        error: 'Body inválido',
+        details: parseError.message 
+      });
     }
 
     const { email, password } = body || {};
@@ -112,11 +125,22 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Erro no login:', error);
+    console.error('Tipo do erro:', error.constructor.name);
+    console.error('Mensagem:', error.message);
     console.error('Stack:', error.stack);
+    
+    // Log adicional para debug
+    if (error.message && error.message.includes('searchParams')) {
+      console.error('⚠️ Erro relacionado a searchParams detectado');
+      console.error('req object keys:', Object.keys(req || {}));
+      console.error('req.url:', req?.url);
+      console.error('req.query:', req?.query);
+    }
+    
     return res.status(500).json({ 
       error: 'Erro ao fazer login',
       message: error.message,
-      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      type: error.constructor.name
     });
   }
 }
