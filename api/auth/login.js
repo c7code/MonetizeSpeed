@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { getPool } from '../db.js';
+import { getPool, initDatabase } from '../db.js';
 
 export default async function handler(req, res) {
   // Suportar CORS preflight
@@ -52,10 +52,34 @@ export default async function handler(req, res) {
     const pool = getPool();
 
     // Buscar usuário
-    const result = await pool.query(
-      'SELECT id, email, password_hash, name FROM users WHERE email = $1',
-      [email.toLowerCase()]
-    );
+    let result;
+    try {
+      result = await pool.query(
+        'SELECT id, email, password_hash, name FROM users WHERE email = $1',
+        [email.toLowerCase()]
+      );
+    } catch (dbError) {
+      // Se a tabela não existir, tentar criar
+      if (dbError.code === '42P01' || dbError.message.includes('does not exist')) {
+        console.log('⚠️ Tabela users não existe, tentando inicializar banco...');
+        try {
+          await initDatabase();
+          // Tentar novamente
+          result = await pool.query(
+            'SELECT id, email, password_hash, name FROM users WHERE email = $1',
+            [email.toLowerCase()]
+          );
+        } catch (initError) {
+          console.error('Erro ao inicializar banco:', initError);
+          return res.status(500).json({ 
+            error: 'Banco de dados não inicializado',
+            hint: 'Acesse /api/_init-db para inicializar o banco'
+          });
+        }
+      } else {
+        throw dbError;
+      }
+    }
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Credenciais inválidas' });
